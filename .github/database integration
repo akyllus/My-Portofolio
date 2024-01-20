@@ -1,0 +1,5 @@
+[dependencies]
+actix-web = "4"
+dotenv = "0.17"
+diesel = { version = "1", features = ["postgres"] }
+tokio = { version = "1", features = ["full"] }
