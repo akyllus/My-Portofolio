@@ -1,190 +1,206 @@
-'use client'
+/*==================== MENU SHOW Y HIDDEN ====================*/
+const navMenu = document.getElementById("nav-menu"),
+  navToggle = document.getElementById("nav-toggle"),
+  navClose = document.getElementById("nav-close");
 
-import { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Moon, Sun, ChevronUp } from 'lucide-react'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-
-export default function Portfolio() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('')
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [theme, setTheme] = useState('light')
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80)
-      const currentSection = getSectionInView()
-      if (currentSection) setActiveSection(currentSection)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  const getSectionInView = () => {
-    const sections = document.querySelectorAll('section[id]')
-    let current = ''
-
-    sections.forEach((section) => {
-      const sectionTop = section.offsetTop
-      if (window.scrollY >= sectionTop - 58) {
-        current = section.getAttribute('id') || ''
-      }
-    })
-
-    return current
-  }
-
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
-    document.documentElement.classList.toggle('dark')
-  }
-
-  return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'dark' : ''}`}>
-      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md dark:bg-gray-800' : 'bg-transparent'}`}>
-        <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <a href="#" className="text-2xl font-bold text-primary">Portfolio</a>
-          <div className="hidden md:flex space-x-4">
-            {['home', 'about', 'skills', 'services', 'portfolio', 'contact'].map((item) => (
-              <a key={item} href={`#${item}`} className={`capitalize ${activeSection === item ? 'text-primary' : 'text-gray-600 dark:text-gray-300'}`}>{item}</a>
-            ))}
-          </div>
-          <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-          </Button>
-          <Button variant="outline" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            Menu
-          </Button>
-        </nav>
-        {isMenuOpen && (
-          <div className="md:hidden bg-white dark:bg-gray-800 py-2">
-            {['home', 'about', 'skills', 'services', 'portfolio', 'contact'].map((item) => (
-              <a key={item} href={`#${item}`} className="block px-4 py-2 capitalize" onClick={() => setIsMenuOpen(false)}>{item}</a>
-            ))}
-          </div>
-        )}
-      </header>
-
-      <main className="pt-16">
-        <section id="home" className="min-h-screen flex items-center justify-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-center">Welcome to My Portfolio</h1>
-        </section>
-
-        <section id="skills" className="py-16 bg-gray-100 dark:bg-gray-900">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">My Skills</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {['Frontend', 'Backend', 'Design', 'Soft Skills'].map((category) => (
-                <Card key={category}>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-4">{category}</h3>
-                    <ul className="space-y-2">
-                      {['Skill 1', 'Skill 2', 'Skill 3'].map((skill) => (
-                        <li key={skill}>{skill}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="services" className="py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">My Services</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {['Web Development', 'UI/UX Design', 'Mobile App Development'].map((service) => (
-                <Card key={service}>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-4">{service}</h3>
-                    <p className="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    <Button>Learn More</Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="portfolio" className="py-16 bg-gray-100 dark:bg-gray-900">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">My Portfolio</h2>
-            <Swiper
-              modules={[Navigation, Pagination]}
-              spaceBetween={30}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true }}
-              breakpoints={{
-                640: {
-                  slidesPerView: 2,
-                },
-                768: {
-                  slidesPerView: 3,
-                },
-              }}
-            >
-              {[1, 2, 3, 4, 5].map((item) => (
-                <SwiperSlide key={item}>
-                  <Card>
-                    <CardContent className="p-6">
-                      <img src={`/placeholder.svg?height=200&width=300`} alt={`Project ${item}`} className="w-full h-40 object-cover mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">Project {item}</h3>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </CardContent>
-                  </Card>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-        </section>
-
-        <section id="contact" className="py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">Contact Me</h2>
-            <form className="max-w-lg mx-auto">
-              <div className="mb-4">
-                <label htmlFor="name" className="block mb-2">Name</label>
-                <input type="text" id="name" className="w-full p-2 border rounded" />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="email" className="block mb-2">Email</label>
-                <input type="email" id="email" className="w-full p-2 border rounded" />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="message" className="block mb-2">Message</label>
-                <textarea id="message" rows={4} className="w-full p-2 border rounded"></textarea>
-              </div>
-              <Button type="submit" className="w-full">Send Message</Button>
-            </form>
-          </div>
-        </section>
-      </main>
-
-      <footer className="bg-gray-800 text-white py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2023 My Portfolio. All rights reserved.</p>
-        </div>
-      </footer>
-
-      <Button
-        variant="outline"
-        size="icon"
-        className={`fixed bottom-4 right-4 transition-opacity duration-300 ${isScrolled ? 'opacity-100' : 'opacity-0'}`}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      >
-        <ChevronUp className="h-4 w-4" />
-      </Button>
-    </div>
-  )
+/*===== MENU SHOW =====*/
+/* Validate if constant exists */
+if (navToggle) {
+  navToggle.addEventListener("click", () => {
+    navMenu.classList.add("show-menu");
+  });
 }
 
+/*===== MENU HIDDEN =====*/
+/* Validate if constant exists */
+if (navClose) {
+  navClose.addEventListener("click", () => {
+    navMenu.classList.remove("show-menu");
+  });
+}
+
+/*==================== REMOVE MENU MOBILE ====================*/
+const navLink = document.querySelectorAll(".nav__link");
+
+function linkAction() {
+  const navMenu = document.getElementById("nav-menu");
+  // When we click on each nav__link, we remove the show-menu class
+  navMenu.classList.remove("show-menu");
+}
+navLink.forEach((n) => n.addEventListener("click", linkAction));
+
+/*==================== ACCORDION SKILLS ====================*/
+const skillsContent = document.getElementsByClassName("skills__content"),
+  skillsHeader = document.querySelectorAll(".skills__header");
+
+function toggleSkills() {
+  let itemClass = this.parentNode.className;
+
+  for (i = 0; i < skillsContent.length; i++) {
+    skillsContent[i].className = "skills__content skills__close";
+  }
+  if (itemClass === "skills__content skills__close") {
+    this.parentNode.className = "skills__content skills__open";
+  }
+}
+
+skillsHeader.forEach((el) => {
+  el.addEventListener("click", toggleSkills);
+});
+
+/*==================== QUALIFICATION TABS ====================*/
+const tabs = document.querySelectorAll("[data-target]"),
+  tabContents = document.querySelectorAll("[data-content]");
+
+tabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    const target = document.querySelector(tab.dataset.target);
+
+    tabContents.forEach((tabContent) => {
+      tabContent.classList.remove("qualification__active");
+    });
+    target.classList.add("qualification__active");
+
+    tabs.forEach((tab) => {
+      tab.classList.remove("qualification__active");
+    });
+    tab.classList.add("qualification__active");
+  });
+});
+
+/*==================== SERVICES MODAL ====================*/
+const modalViews = document.querySelectorAll(".services__modal"),
+  modalBtns = document.querySelectorAll(".services__button"),
+  modalCloses = document.querySelectorAll(".services__modal-close");
+
+let modal = function (modalClick) {
+  modalViews[modalClick].classList.add("active-modal");
+};
+
+modalBtns.forEach((modalBtn, i) => {
+  modalBtn.addEventListener("click", () => {
+    modal(i);
+  });
+});
+
+modalCloses.forEach((modalClose) => {
+  modalClose.addEventListener("click", () => {
+    modalViews.forEach((modalView) => {
+      modalView.classList.remove("active-modal");
+    });
+  });
+});
+
+/*==================== PORTFOLIO SWIPER  ====================*/
+let swiperPortfolio = new Swiper(".portfolio__container", {
+  cssMode: true,
+  loop: true,
+
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true,
+  },
+});
+
+/*==================== TESTIMONIAL ====================*/
+let swiperTestimonial = new Swiper(".testimonial__container", {
+  loop: true,
+  grabCursor: true,
+  spaceBetween: 48,
+
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true,
+    dynamicBullets: true,
+  },
+
+  breakpoints: {
+    568: {
+      slidesPerView: 2,
+    },
+  },
+});
+
+/*==================== SCROLL SECTIONS ACTIVE LINK ====================*/
+const sections = document.querySelectorAll("section[id]");
+
+function scrollActive() {
+  const scrollY = window.pageYOffset;
+
+  sections.forEach((current) => {
+    const sectionHeight = current.offsetHeight;
+    const sectionTop = current.offsetTop - 50;
+    sectionId = current.getAttribute("id");
+
+    if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+      document
+        .querySelector(".nav__menu a[href*=" + sectionId + "]")
+        .classList.add("active-link");
+    } else {
+      document
+        .querySelector(".nav__menu a[href*=" + sectionId + "]")
+        .classList.remove("active-link");
+    }
+  });
+}
+window.addEventListener("scroll", scrollActive);
+
+/*==================== CHANGE BACKGROUND HEADER ====================*/
+function scrollHeader() {
+  const nav = document.getElementById("header");
+  // When the scroll is greater than 200 viewport height, add the scroll-header class to the header tag
+  if (this.scrollY >= 80) nav.classList.add("scroll-header");
+  else nav.classList.remove("scroll-header");
+}
+window.addEventListener("scroll", scrollHeader);
+
+/*==================== SHOW SCROLL UP ====================*/
+function scrollUp() {
+  const scrollUp = document.getElementById("scroll-up");
+  // When the scroll is higher than 560 viewport height, add the show-scroll class to the a tag with the scroll-top class
+  if (this.scrollY >= 560) scrollUp.classList.add("show-scroll");
+  else scrollUp.classList.remove("show-scroll");
+}
+window.addEventListener("scroll", scrollUp);
+
+/*==================== DARK LIGHT THEME ====================*/
+
+const themeButton = document.getElementById("theme-button");
+const darkTheme = "dark-theme";
+const iconTheme = "uil-sun";
+
+// Previously selected topic (if user selected)
+const selectedTheme = localStorage.getItem("selected-theme");
+const selectedIcon = localStorage.getItem("selected-icon");
+
+// We obtain the current theme that the interface has by validating the dark-theme class
+const getCurrentTheme = () =>
+  document.body.classList.contains(darkTheme) ? "dark" : "light";
+const getCurrentIcon = () =>
+  themeButton.classList.contains(iconTheme) ? "uil-moon" : "uil-sun";
+
+// We validate if the user previously chose a topic
+if (selectedTheme) {
+  // If the validation is fulfilled, we ask what the issue was to know if we activated or deactivated the dark
+  document.body.classList[selectedTheme === "dark" ? "add" : "remove"](
+    darkTheme
+  );
+  themeButton.classList[selectedIcon === "uil-moon" ? "add" : "remove"](
+    iconTheme
+  );
+}
+
+// Activate / deactivate the theme manually with the button
+themeButton.addEventListener("click", () => {
+  // Add or remove the dark / icon theme
+  document.body.classList.toggle(darkTheme);
+  themeButton.classList.toggle(iconTheme);
+  // We save the theme and the current icon that the user chose
+  localStorage.setItem("selected-theme", getCurrentTheme());
+  localStorage.setItem("selected-icon", getCurrentIcon());
+});
